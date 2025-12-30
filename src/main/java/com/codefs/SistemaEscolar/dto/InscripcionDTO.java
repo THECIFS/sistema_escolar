@@ -13,6 +13,7 @@ public record InscripcionDTO(
         UUID id_alumno,
         UUID id_grupo,
         UUID id_materia,
+        UUID id_docente,
         List<CalificacionDTO> calificaciones
 ) {
 }

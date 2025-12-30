@@ -13,7 +13,6 @@ public record MateriaDTO(
         Float horas,
         Byte semestre,
         List<InscripcionDTO> inscripciones,
-        Integer id_carrera,
-        UUID id_docente
+        Integer id_carrera
 ) {
 }

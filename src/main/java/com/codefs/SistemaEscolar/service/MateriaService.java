@@ -8,6 +8,7 @@ import com.codefs.SistemaEscolar.mapper.Mapper;
 import com.codefs.SistemaEscolar.model.Carrera;
 import com.codefs.SistemaEscolar.model.Docente;
 import com.codefs.SistemaEscolar.model.Materia;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,11 +29,7 @@ public class MateriaService implements IMateria{
     @Override
     public MateriaDTO save(MateriaDTO materiaDTO) {
 
-        if(materiaDTO!=null && materiaDTO.id_carrera()==null  && materiaDTO.id_docente()==null){
-
-            Docente docente = dao_docente.findById(materiaDTO.id_docente()).orElseThrow(()-> {
-                throw new RuntimeException("El id del docente no existe: "+materiaDTO.id_docente());
-            });
+        if(materiaDTO!=null && materiaDTO.id_carrera()!=null ){
 
             Carrera carrera = dao_carrera.findById(materiaDTO.id_carrera()).orElseThrow(()->{
                 throw new RuntimeException("El id de la carrera no existe: "+materiaDTO.id_carrera());
@@ -45,6 +42,7 @@ public class MateriaService implements IMateria{
                     .horas(materiaDTO.horas())
                     .semestre(materiaDTO.semestre())
                     .inscripciones(new ArrayList<>())
+                    .carrera(carrera)
                     .build();
 
             return Mapper.toDTO(dao.save(materia));
@@ -55,61 +53,87 @@ public class MateriaService implements IMateria{
 
     @Override
     public MateriaDTO updateById(UUID id, MateriaDTO materiaDTO) {
+
+        Materia materia = dao.findById(id).orElseThrow(()->{throw new RuntimeException("");});
+
+        Carrera carrera = dao_carrera.findById(materiaDTO.id_carrera()).orElseThrow(()->{throw new RuntimeException("");});
+
+        if(materia!=null){
+            materia.setCreditos(materiaDTO.creditos());
+            materia.setCarrera(carrera);
+            materia.setHoras(materiaDTO.horas());
+            materia.setNombre(materiaDTO.nombre());
+            materia.setParciales(materiaDTO.parciales());
+            materia.setSemestre(materiaDTO.semestre());
+            return Mapper.toDTO(dao.save(materia));
+        }
+
         return null;
     }
 
     @Override
     public MateriaDTO updateByName(String name, MateriaDTO materiaDTO) {
+        Materia materia = dao.findByNameAndMajorId(name, materiaDTO.id_carrera()).orElseThrow(()->{throw new RuntimeException("");});
+        if(materia!=null){
+            materia.setSemestre(materiaDTO.semestre());
+            materia.setCreditos(materiaDTO.creditos());
+            materia.setHoras(materiaDTO.horas());
+            materia.setParciales(materiaDTO.parciales());
+            return Mapper.toDTO(dao.save(materia));
+        }
+
         return null;
     }
 
     @Override
     public void deleteById(UUID id) {
-
+        Materia materia = dao.findById(id).orElseThrow(()->{throw new RuntimeException("");});
+        if(materia!=null){
+            dao.deleteById(id);
+        }
     }
 
+    @Transactional
     @Override
-    public void deleteByName(String name) {
-
+    public void deleteByName(String name, Integer id_career) {
+        Materia materia = dao.findByNameAndMajorId(name, id_career).orElseThrow(()->{throw new RuntimeException("");});
+        if(materia!=null){
+            dao.deleteByNameAndMajorId(name, id_career);
+        }
     }
 
     @Override
     public MateriaDTO findById(UUID id) {
-        return null;
+        return Mapper.toDTO(dao.findById(id).orElseThrow(()->{throw new RuntimeException("");}));
     }
 
     @Override
     public List<MateriaDTO> findByName(String name) {
-        return List.of();
+        return dao.findByName(name).orElseThrow(()-> new RuntimeException("")).stream().map(Mapper::toDTO).toList();
     }
 
     @Override
     public List<MateriaDTO> findByPartial(Byte partial) {
-        return List.of();
+        return dao.findByPartial(partial).orElseThrow(()->new RuntimeException("")).stream().map(Mapper::toDTO).toList();
     }
 
     @Override
     public List<MateriaDTO> findByHours(Float hours) {
-        return List.of();
+        return dao.findByHours(hours).orElseThrow(()->new RuntimeException("")).stream().map(Mapper::toDTO).toList();
     }
 
     @Override
     public List<MateriaDTO> findBySemester(Byte semester) {
-        return List.of();
+        return dao.findBySemester(semester).orElseThrow(()->new RuntimeException("")).stream().map(Mapper::toDTO).toList();
     }
 
     @Override
-    public List<MateriaDTO> findByCareer(UUID id_career) {
-        return List.of();
-    }
-
-    @Override
-    public List<MateriaDTO> findByTeacching(UUID id_teaching) {
-        return List.of();
+    public List<MateriaDTO> findByCareer(Integer id_career) {
+        return dao.findByCareerId(id_career).orElseThrow(()->new RuntimeException("")).stream().map(Mapper::toDTO).toList();
     }
 
     @Override
     public List<MateriaDTO> findAll() {
-        return List.of();
+        return dao.findAll().stream().map(Mapper::toDTO).toList();
     }
 }

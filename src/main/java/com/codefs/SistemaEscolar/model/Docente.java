@@ -35,5 +35,5 @@ public class Docente extends Persona{
     private String especialidad;
     @JsonManagedReference
     @OneToMany(mappedBy = "docente", fetch = FetchType.LAZY)
-    private List<Materia> materias = new ArrayList<>();
+    private List<Inscripcion> inscripciones = new ArrayList<>();
 }

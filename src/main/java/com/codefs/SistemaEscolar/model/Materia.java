@@ -13,6 +13,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@NamedQueries({
+        @NamedQuery(name = "Materia.findByNameAndMajorId", query = "select m from Materia m where m.nombre=:nombre and m.carrera.id=:id_career"),
+        @NamedQuery(name = "Materia.deleteByNameAndMajorId", query = "delete from Materia m where m.nombre=:nombre and m.carrera.id=:id_career"),
+        @NamedQuery(name = "Materia.findByName", query = "select m from Materia m where m.nombre=:nombre"),
+        @NamedQuery(name = "Materia.findByPartial", query = "select m from Materia m where m.parciales=:parciales"),
+        @NamedQuery(name = "Materia.findByHours", query = "select m from Materia m where m.horas=:horas"),
+        @NamedQuery(name = "Materia.finBySemester", query = "select m from Materia m where m.semestre=:semestre"),
+        @NamedQuery(name = "Materia.findByCareerId", query = "select m from Materia m where m.carrera.id=:id_career")
+})
+
 @Builder
 @Data
 @AllArgsConstructor
@@ -40,8 +50,4 @@ public class Materia {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_carrera")
     private Carrera carrera;
-    @JsonBackReference
-    @ManyToOne
-    @JoinColumn(name = "id_docente")
-    private Docente docente;
 }

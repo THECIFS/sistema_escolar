@@ -31,7 +31,7 @@ public interface IMateria {
 
 
     public void deleteById(UUID id);
-    public void deleteByName(String name);
+    public void deleteByName(String name, Integer id_career);
 
 
     public MateriaDTO findById(UUID id);
@@ -39,8 +39,7 @@ public interface IMateria {
     public List<MateriaDTO> findByPartial(Byte partial);
     public List<MateriaDTO> findByHours(Float hours);
     public List<MateriaDTO> findBySemester(Byte semester);
-    public List<MateriaDTO> findByCareer(UUID id_career);
-    public List<MateriaDTO> findByTeacching(UUID id_teaching);
+    public List<MateriaDTO> findByCareer(Integer id_career);
     public List<MateriaDTO> findAll();
 
 }

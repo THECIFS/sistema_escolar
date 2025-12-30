@@ -39,4 +39,8 @@ public class Inscripcion {
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     private Materia materia;
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "id_docente")
+    private Docente docente;
 }

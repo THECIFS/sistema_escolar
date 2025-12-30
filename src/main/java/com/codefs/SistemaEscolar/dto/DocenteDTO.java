@@ -1,6 +1,7 @@
 package com.codefs.SistemaEscolar.dto;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 public record DocenteDTO(
@@ -14,6 +15,7 @@ public record DocenteDTO(
         String correo,
         String telefono,
         Boolean estatus,
-        String especialidad
+        String especialidad,
+        List<InscripcionDTO> inscripciones
 ) {
 }

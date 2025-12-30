@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
 import javax.print.Doc;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,6 +34,7 @@ public class DocenteService implements IDocente{
                     .telefono(docenteDTO.telefono())
                     .estatus(true)
                     .especialidad(docenteDTO.especialidad())
+                    .inscripciones(new ArrayList<>())
                     .build();
             return Mapper.toDTO(dao.save(docente));
         }

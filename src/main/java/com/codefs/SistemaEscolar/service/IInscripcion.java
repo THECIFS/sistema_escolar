@@ -21,6 +21,7 @@ public interface IInscripcion {
             id_alumno
             id_grupo
             id_materia
+            All
     */
 
     public InscripcionDTO save(InscripcionDTO inscripcionDTO);
@@ -37,4 +38,6 @@ public interface IInscripcion {
     public List<InscripcionDTO> findByStudentId(UUID id);
     public List<InscripcionDTO> findByGroupId(UUID id);
     public List<InscripcionDTO> findBySubjectId(UUID id);
+    public List<InscripcionDTO> findByTeachingId(UUID id);
+    public List<InscripcionDTO> findAll();
 }

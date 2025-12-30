@@ -4,6 +4,7 @@ import com.codefs.SistemaEscolar.dto.*;
 import com.codefs.SistemaEscolar.model.*;
 
 import javax.print.Doc;
+import java.util.ArrayList;
 
 public class Mapper {
 
@@ -17,8 +18,7 @@ public class Mapper {
                 materia.getHoras(),
                 materia.getSemestre(),
                 materia.getInscripciones().stream().map(Mapper::toDTO).toList(),
-                materia.getCarrera().getId(),
-                materia.getDocente().getId()
+                materia.getCarrera().getId()
         );
         return materiaDTO;
     }
@@ -32,6 +32,7 @@ public class Mapper {
                 inscripcion.getAlumno().getId(),
                 inscripcion.getGrupo().getId(),
                 inscripcion.getMateria().getId(),
+                inscripcion.getDocente().getId(),
                 inscripcion.getCalificaciones().stream().map(Mapper::toDTO).toList()
         );
         return inscripcionDTO;
@@ -86,7 +87,8 @@ public class Mapper {
                 docente.getCorreo(),
                 docente.getTelefono(),
                 docente.getEstatus(),
-                docente.getEspecialidad()
+                docente.getEspecialidad(),
+                new ArrayList<>()
         );
         return docenteDTO;
     }
