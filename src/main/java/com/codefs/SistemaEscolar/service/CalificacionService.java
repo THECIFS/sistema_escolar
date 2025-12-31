@@ -50,12 +50,13 @@ public class CalificacionService implements ICalificacion{
         if(calificacion!=null){
             calificacion.setParcial(calificacionDTO.parcial());
             calificacion.setCalificacionFinal(calificacion.getCalificacionFinal());
-            calificacion.setEstatus(calificacion.getEstatus());
+            calificacion.setEstatus(calificacionDTO.estatus());
 
             if(calificacionDTO.id_inscripcion()!=null){
                 Inscripcion inscripcion = inscripcionDAO.findById(calificacionDTO.id_inscripcion()).orElse(null);
                 calificacion.setInscripcion(inscripcion);
             }
+            return Mapper.toDTO(calificacionDAO.save(calificacion));
         }
         return null;
     }

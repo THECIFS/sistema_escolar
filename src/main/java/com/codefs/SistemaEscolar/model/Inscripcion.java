@@ -13,6 +13,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@NamedQueries(
+        {
+                @NamedQuery(name = "Inscripcion.findByDate", query = "select i from Inscripcion i where i.fechaInscripcion=:fechaInscripcion"),
+                @NamedQuery(name = "Inscripcion.findBySchoolYear", query = "select i from Inscripcion i where i.cicloEscolar=:cicloEscolar"),
+                @NamedQuery(name = "Inscripcion.findByStudentId", query = "select i from Inscripcion i where i.alumno.id=:id_alumno"),
+                @NamedQuery(name = "Inscripcion.findByGroupId", query = "select i from Inscripcion i where i.grupo.id=:id_grupo"),
+                @NamedQuery(name = "Inscripcion.findBySubjectId", query = "select i from Inscripcion i where i.materia.id=:id_materia"),
+                @NamedQuery(name = "Inscripcion.findByTeachingId", query = "select i from Inscripcion i where i.docente.id=:id_docente")
+        }
+)
+
 @Data
 @Builder
 @AllArgsConstructor

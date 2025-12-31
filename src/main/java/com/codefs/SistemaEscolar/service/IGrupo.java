@@ -34,4 +34,5 @@ public interface IGrupo {
     public List<GrupoDTO> findBySchoolYear(String schoolYear);
     public List<GrupoDTO> findBySemester(Byte semester);
     public List<GrupoDTO> findByShift(String shift);
+    public List<GrupoDTO> findAll();
 }

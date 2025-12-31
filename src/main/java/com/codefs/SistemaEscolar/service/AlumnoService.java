@@ -2,6 +2,7 @@ package com.codefs.SistemaEscolar.service;
 
 import com.codefs.SistemaEscolar.dao.AlumnoDAO;
 import com.codefs.SistemaEscolar.dto.AlumnoDTO;
+import com.codefs.SistemaEscolar.exception.ResourceNotFound;
 import com.codefs.SistemaEscolar.mapper.Mapper;
 import com.codefs.SistemaEscolar.model.Alumno;
 import jakarta.transaction.Transactional;
@@ -19,7 +20,6 @@ public class AlumnoService implements IAlumno{
 
     @Override
     public AlumnoDTO save(AlumnoDTO alumnoDTO) {
-        if(alumnoDTO!=null){
             Alumno alumno = Alumno.builder()
                     .nombre(alumnoDTO.nombre())
                     .apellidoPaterno(alumnoDTO.apellidoPaterno())
@@ -32,19 +32,13 @@ public class AlumnoService implements IAlumno{
                     .estatus(true)
                     .matricula(alumnoDTO.matricula())
                     .build();
-
             return Mapper.toDTO(dao.save(alumno));
-        }
-        return null;
     }
 
     @Transactional(rollbackOn = RuntimeException.class)
     @Override
     public AlumnoDTO updateById(UUID id, AlumnoDTO alumnoDTO) {
-
-        Alumno alumno = dao.findById(id).orElse(null);
-
-        if(alumno!=null){
+        Alumno alumno = dao.findById(id).orElseThrow(()->new ResourceNotFound("La ID del alumno: "+id+" no fue encontrada"));
             alumno.setNombre(alumnoDTO.nombre());
             alumno.setApellidoPaterno(alumnoDTO.apellidoPaterno());
             alumno.setApellidoMaterno(alumnoDTO.apellidoMaterno());
@@ -55,19 +49,14 @@ public class AlumnoService implements IAlumno{
             alumno.setTelefono(alumnoDTO.telefono());
             alumno.setEstatus(alumnoDTO.estatus());
             alumno.setMatricula(alumnoDTO.matricula());
-
             Alumno alumnoUpdate = dao.save(alumno);
             return Mapper.toDTO(alumnoUpdate);
-        }
-        return null;
-        //throw new RuntimeException("El usuario no existe");
     }
 
     @Transactional
     @Override
     public AlumnoDTO updateByEmail(String email, AlumnoDTO alumnoDTO) {
-        Alumno alumno = dao.findByEmail(email).orElse(null);
-        if(alumno != null){
+        Alumno alumno = dao.findByEmail(email).orElseThrow(()->new ResourceNotFound("El correo del alumno: "+email+" no fue encontrado"));
             alumno.setNombre(alumnoDTO.nombre());
             alumno.setApellidoPaterno(alumnoDTO.apellidoPaterno());
             alumno.setApellidoMaterno(alumnoDTO.apellidoMaterno());
@@ -79,15 +68,12 @@ public class AlumnoService implements IAlumno{
             alumno.setMatricula(alumnoDTO.matricula());
             Alumno alumnoUpdate = dao.save(alumno);
             return Mapper.toDTO(alumnoUpdate);
-        }
-        return null;
     }
 
     @Transactional
     @Override
     public AlumnoDTO updateByEnrollment(String enrollment, AlumnoDTO alumnoDTO) {
-        Alumno alumno = dao.findByEnrollment(enrollment).orElse(null);
-        if(alumno!=null){
+        Alumno alumno = dao.findByEnrollment(enrollment).orElseThrow(()->new ResourceNotFound("La matricula del alumno: "+enrollment+" no fue encontrada"));
             alumno.setNombre(alumnoDTO.nombre());
             alumno.setApellidoPaterno(alumnoDTO.apellidoPaterno());
             alumno.setApellidoMaterno(alumnoDTO.apellidoMaterno());
@@ -99,53 +85,42 @@ public class AlumnoService implements IAlumno{
             alumno.setEstatus(alumnoDTO.estatus());
             Alumno alumnoUpdate = dao.save(alumno);
             return Mapper.toDTO(alumnoUpdate);
-        }
-        return null;
     }
 
     @Transactional
     @Override
     public void deleteById(UUID id) {
-        Alumno alumno = dao.findById(id).orElse(null);
-        if(alumno!=null){
+        Alumno alumno = dao.findById(id).orElseThrow(()->new ResourceNotFound("La ID del alumno: "+id+" no fue encontrada"));
             dao.deleteById(alumno.getId());
-        }
-
-        //throw new RuntimeException("");
     }
 
     @Transactional
     @Override
     public void deleteByEmail(String email) {
-        Alumno alumno = dao.findByEmail(email).orElse(null);
-        if(alumno!=null){
+        Alumno alumno = dao.findByEmail(email).orElseThrow(()->new ResourceNotFound("El correo del alumno: "+email+" no fue encontrado"));
             dao.deleteByEmail(email);
-        }
-        //throw new RuntimeException("");
     }
 
     @Transactional
     @Override
     public void deleteByEnrollment(String enrollment) {
-        Alumno alumno = dao.findByEnrollment(enrollment).orElse(null);
-        if(alumno!=null){
+        Alumno alumno = dao.findByEnrollment(enrollment).orElseThrow(()->new ResourceNotFound("La matricula del alumno: "+enrollment+" no fue encontrada"));
             dao.deleteByEnrollment(enrollment);
-        }
     }
 
     @Override
     public AlumnoDTO findById(UUID id) {
-        return Mapper.toDTO(dao.findById(id).orElseThrow(()->{throw new RuntimeException("");}));
+        return Mapper.toDTO(dao.findById(id).orElseThrow(()->{throw new ResourceNotFound("El ID del alumno: "+id+" no fue encontradp");}));
     }
 
     @Override
     public AlumnoDTO findByEmail(String email) {
-        return Mapper.toDTO(dao.findByEmail(email).orElseThrow(()->{throw new RuntimeException("");}));
+        return Mapper.toDTO(dao.findByEmail(email).orElseThrow(()->{throw new ResourceNotFound("El correo del alumno: "+email+" no fue encontrado");}));
     }
 
     @Override
     public AlumnoDTO findByPhone(String phone) {
-        return Mapper.toDTO(dao.findByPhone(phone).orElseThrow(()->{throw new RuntimeException("");}));
+        return Mapper.toDTO(dao.findByPhone(phone).orElseThrow(()->{throw new RuntimeException("El numero de telefono del alumno: "+phone+" no fue encontrado");}));
     }
 
     @Override
@@ -166,7 +141,7 @@ public class AlumnoService implements IAlumno{
     @Override
     public AlumnoDTO findByEnrollment(String enrollment) {
         return Mapper.toDTO(dao.findByEnrollment(enrollment).orElseThrow(()->{
-            throw new RuntimeException("");
+            throw new ResourceNotFound("La matricula del alumno: "+enrollment+" no fue encontrada");
         }));
     }
 

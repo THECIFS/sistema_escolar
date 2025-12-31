@@ -10,6 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@NamedQueries(
+        {
+                @NamedQuery(name = "Grupo.findByName", query = "select g from Grupo g where g.nombre=:nombre"),
+                @NamedQuery(name = "Grupo.findBySchoolYear", query = "select g from Grupo g where g.cicloEscolar=:cicloEscolar"),
+                @NamedQuery(name = "Grupo.findBySemester", query = "select g from Grupo g where g.semestre=:semestre"),
+                @NamedQuery(name = "Grupo.findByShift", query = "select g from Grupo g where g.turno=:turno")
+        }
+)
+
 @Data
 @Builder
 @AllArgsConstructor
