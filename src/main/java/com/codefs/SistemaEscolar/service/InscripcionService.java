@@ -2,6 +2,7 @@ package com.codefs.SistemaEscolar.service;
 
 import com.codefs.SistemaEscolar.dao.*;
 import com.codefs.SistemaEscolar.dto.InscripcionDTO;
+import com.codefs.SistemaEscolar.exception.ResourceNotFound;
 import com.codefs.SistemaEscolar.mapper.Mapper;
 import com.codefs.SistemaEscolar.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,15 +32,10 @@ public class InscripcionService implements IInscripcion{
 
     @Override
     public InscripcionDTO save(InscripcionDTO inscripcionDTO) {
-
-        Alumno alumno = alumno_dao.findById(inscripcionDTO.id_alumno()).orElseThrow(()->new RuntimeException("No se encontro el alumno"));
-
-        Grupo grupo = grupo_dao.findById(inscripcionDTO.id_grupo()).orElseThrow(()->new RuntimeException("No se encontro el grupo"));
-
-        Materia materia = materia_dao.findById(inscripcionDTO.id_materia()).orElseThrow(()->new RuntimeException("No se encontro la materia"));
-
-        Docente docente = docente_dao.findById(inscripcionDTO.id_docente()).orElseThrow(()->new RuntimeException("No se encontro el docente"));
-
+        Alumno alumno = alumno_dao.findById(inscripcionDTO.id_alumno()).orElseThrow(()->new ResourceNotFound("El id del alumno: "+inscripcionDTO.id_alumno()+" no fue encontrado"));
+        Grupo grupo = grupo_dao.findById(inscripcionDTO.id_grupo()).orElseThrow(()->new ResourceNotFound("El id del grupo: "+inscripcionDTO.id_grupo()+" no fue encontrado"));
+        Materia materia = materia_dao.findById(inscripcionDTO.id_materia()).orElseThrow(()->new ResourceNotFound("El id de la materia: "+inscripcionDTO.id_materia()+" no fue encontrada"));
+        Docente docente = docente_dao.findById(inscripcionDTO.id_docente()).orElseThrow(()->new ResourceNotFound("El id del docente: "+inscripcionDTO.id_docente()+" no fue encontrado"));
         Inscripcion inscripcion = Inscripcion.builder()
                 .fechaInscripcion(LocalDate.now())
                 .cicloEscolar(inscripcionDTO.cicloEscolar())
@@ -49,37 +45,27 @@ public class InscripcionService implements IInscripcion{
                 .materia(materia)
                 .docente(docente)
                 .build();
-
         return Mapper.toDTO(dao.save(inscripcion));
     }
 
     @Override
     public InscripcionDTO updateById(UUID id, InscripcionDTO inscripcionDTO) {
-
-        Inscripcion inscripcion = dao.findById(id).orElseThrow(()->new RuntimeException(""));
-
-        Alumno alumno = alumno_dao.findById(id).orElseThrow(()->new RuntimeException(""));
-
-        Grupo grupo = grupo_dao.findById(inscripcionDTO.id_grupo()).orElseThrow(()->new RuntimeException(""));
-
-        Materia materia = materia_dao.findById(inscripcionDTO.id_materia()).orElseThrow(()->new RuntimeException(""));
-
-        Docente docente = docente_dao.findById(inscripcionDTO.id_docente()).orElseThrow(()->new RuntimeException(""));
-
+        Inscripcion inscripcion = dao.findById(id).orElseThrow(()->new ResourceNotFound("El id de la inscripcion: "+id+" no fue encontrado"));
+        Alumno alumno = alumno_dao.findById(inscripcionDTO.id_alumno()).orElseThrow(()->new ResourceNotFound("El id del alumno: "+inscripcionDTO.id_alumno()+" no fue encontrado"));
+        Grupo grupo = grupo_dao.findById(inscripcionDTO.id_grupo()).orElseThrow(()->new ResourceNotFound("El id del grupo: "+inscripcionDTO.id_grupo()+" no fue encontrado"));
+        Materia materia = materia_dao.findById(inscripcionDTO.id_materia()).orElseThrow(()->new ResourceNotFound("El id de la materia: "+inscripcionDTO.id_materia()+" no fue encontrada"));
+        Docente docente = docente_dao.findById(inscripcionDTO.id_docente()).orElseThrow(()->new ResourceNotFound("El id del docente: "+inscripcionDTO.id_docente()+" no fue encontrado"));
         inscripcion.setAlumno(alumno);
         inscripcion.setGrupo(grupo);
         inscripcion.setMateria(materia);
         inscripcion.setDocente(docente);
-
         return Mapper.toDTO(dao.save(inscripcion));
     }
 
     @Override
     public void deleteById(UUID id) {
-        Inscripcion inscripcion = dao.findById(id).orElseThrow(()->new RuntimeException(""));
-        if(inscripcion!=null){
+        Inscripcion inscripcion = dao.findById(id).orElseThrow(()->new ResourceNotFound("El id de la inscripcion: "+id+" no fue encontrado"));
             dao.deleteById(id);
-        }
     }
 
     @Override

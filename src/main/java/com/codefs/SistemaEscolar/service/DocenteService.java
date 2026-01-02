@@ -2,6 +2,7 @@ package com.codefs.SistemaEscolar.service;
 
 import com.codefs.SistemaEscolar.dao.DocenteDAO;
 import com.codefs.SistemaEscolar.dto.DocenteDTO;
+import com.codefs.SistemaEscolar.exception.ResourceNotFound;
 import com.codefs.SistemaEscolar.mapper.Mapper;
 import com.codefs.SistemaEscolar.model.Docente;
 import jakarta.transaction.Transactional;
@@ -22,7 +23,6 @@ public class DocenteService implements IDocente{
 
     @Override
     public DocenteDTO save(DocenteDTO docenteDTO) {
-        if(docenteDTO!=null){
             Docente docente = Docente.builder()
                     .nombre(docenteDTO.nombre())
                     .apellidoPaterno(docenteDTO.apellidoPaterno())
@@ -37,15 +37,12 @@ public class DocenteService implements IDocente{
                     .inscripciones(new ArrayList<>())
                     .build();
             return Mapper.toDTO(dao.save(docente));
-        }
-        return null;
     }
 
     @Transactional
     @Override
     public DocenteDTO updateById(UUID id, DocenteDTO docenteDTO) {
-        Docente docente = dao.findById(id).orElse(null);
-        if(docente!=null){
+        Docente docente = dao.findById(id).orElseThrow(()->new ResourceNotFound("El id del docente: "+id+" no fue encontrada"));
             docente.setNombre(docenteDTO.nombre());
             docente.setApellidoPaterno(docenteDTO.apellidoPaterno());
             docente.setApellidoMaterno(docenteDTO.apellidoMaterno());
@@ -57,15 +54,12 @@ public class DocenteService implements IDocente{
             docente.setEstatus(docenteDTO.estatus());
             Docente updateDocente = dao.save(docente);
             return Mapper.toDTO(updateDocente);
-        }
-        return null;
     }
 
     @Transactional
     @Override
     public DocenteDTO updateByEmail(String email, DocenteDTO docenteDTO) {
-        Docente docente = dao.findByEmail(email).orElse(null);
-        if(docente!=null){
+        Docente docente = dao.findByEmail(email).orElseThrow(()->new ResourceNotFound("El email del docene: "+email+" no fue encontrado"));
             docente.setNombre(docenteDTO.nombre());
             docente.setApellidoPaterno(docenteDTO.apellidoPaterno());
             docente.setApellidoMaterno(docenteDTO.apellidoMaterno());
@@ -77,54 +71,37 @@ public class DocenteService implements IDocente{
             docente.setEspecialidad(docenteDTO.especialidad());
             Docente updateDocente = dao.save(docente);
             return Mapper.toDTO(updateDocente);
-        }
-        return null;
     }
 
     @Override
     public void deleteById(UUID id) {
-        Docente docente = dao.findById(id).orElse(null);
-        if(docente!=null){
+        Docente docente = dao.findById(id).orElseThrow(()->new ResourceNotFound("El id del docente: "+id+" no fue encontrado"));
             dao.deleteById(id);
-        }
-        //throw new RuntimeException("");
     }
 
     @Transactional
     @Override
     public void deleteByEmail(String email) {
-        Docente docente = dao.findByEmail(email).orElse(null);
-        if(docente!=null){
+        Docente docente = dao.findByEmail(email).orElseThrow(()->new ResourceNotFound("El email del docene"+email+" no fue encontrado"));
             dao.deleteByEmail(email);
-        }
-        //throw new RuntimeException("");
     }
 
     @Override
     public DocenteDTO findById(UUID id) {
-        Docente docente = dao.findById(id).orElse(null);
-        if(docente!=null){
+        Docente docente = dao.findById(id).orElseThrow(()->new ResourceNotFound("El id del docente: "+id+" no fue encontrado"));
             return Mapper.toDTO(docente);
-        }
-        return null;
     }
 
     @Override
     public DocenteDTO findByEmail(String email) {
-        Docente docente = dao.findByEmail(email).orElse(null);
-        if(docente!=null){
+        Docente docente = dao.findByEmail(email).orElseThrow(()-> new ResourceNotFound("El email del docente: "+email+" no fue encontrado"));
             return Mapper.toDTO(docente);
-        }
-        return null;
     }
 
     @Override
     public DocenteDTO findByPhone(String phone) {
-        Docente docente = dao.findByPhone(phone).orElse(null);
-        if(docente!=null){
+        Docente docente = dao.findByPhone(phone).orElseThrow(()->new ResourceNotFound("El telefono del docente: "+phone+" no fue encontrado"));
             return Mapper.toDTO(docente);
-        }
-        return null;
     }
 
     @Override

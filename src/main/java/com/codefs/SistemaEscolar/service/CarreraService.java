@@ -3,6 +3,7 @@ package com.codefs.SistemaEscolar.service;
 import com.codefs.SistemaEscolar.dao.CarreraDAO;
 import com.codefs.SistemaEscolar.dao.MateriaDAO;
 import com.codefs.SistemaEscolar.dto.CarreraDTO;
+import com.codefs.SistemaEscolar.exception.ResourceNotFound;
 import com.codefs.SistemaEscolar.mapper.Mapper;
 import com.codefs.SistemaEscolar.model.Carrera;
 import com.codefs.SistemaEscolar.model.Materia;
@@ -25,7 +26,6 @@ public class CarreraService implements ICarrera{
 
     @Override
     public CarreraDTO save(CarreraDTO carreraDTO) {
-        if(carreraDTO!=null){
             System.out.println("Punto de control save");
             System.out.println(carreraDTO.toString());
             Carrera carrera = Carrera.builder()
@@ -38,43 +38,30 @@ public class CarreraService implements ICarrera{
             Carrera c = dao.save(carrera);
             System.out.println(c.toString());
             return Mapper.toDTO(c);
-        }
-        return null;
     }
 
     @Transactional
     @Override
     public CarreraDTO updateById(Integer id, CarreraDTO carreraDTO) {
-        Carrera carrera = dao.findById(id).orElse(null);
-        if(carrera!=null){
+        Carrera carrera = dao.findById(id).orElseThrow(()->new ResourceNotFound("El id de la carrera: "+id+" no fue encontrada"));
             carrera.setNombre(carreraDTO.nombre());
             carrera.setNivel(carreraDTO.nivel());
             carrera.setDuracion(carreraDTO.duracion());
             return Mapper.toDTO(dao.save(carrera));
-        }
-        return null;
     }
 
     @Transactional
     @Override
     public CarreraDTO updateByName(String name, CarreraDTO carreraDTO) {
-
-        Carrera carrera = dao.findByName(name).orElse(null);
-
-        if(carrera!=null){
-
+        Carrera carrera = dao.findByName(name).orElseThrow(()->new ResourceNotFound("El nombre de la carrera: "+name+" no fue encontrada"));
             carrera.setNivel(carreraDTO.nivel());
             carrera.setNivel(carreraDTO.nivel());
-
             return Mapper.toDTO(carrera);
-        }
-
-        return null;
     }
 
     @Override
     public void deleteById(Integer id) {
-        Carrera carrera = dao.findById(id).orElse(null);
+        Carrera carrera = dao.findById(id).orElseThrow(()->new ResourceNotFound("El id de la carrera: "+id+" no fue encontrada"));
         if(carrera!=null){
             dao.deleteById(id);
         }
@@ -83,46 +70,32 @@ public class CarreraService implements ICarrera{
     @Transactional
     @Override
     public void deleteByName(String name) {
-        Carrera carrera = dao.findByName(name).orElse(null);
-        if(carrera!=null){
+        Carrera carrera = dao.findByName(name).orElseThrow(()->new ResourceNotFound("El nombre de la carrera: "+name+" no fue encontrada"));
             dao.deleteByName(name);
-        }
     }
 
     @Override
     public CarreraDTO findById(Integer id) {
-        Carrera carrera = dao.findById(id).orElse(null);
-        if(carrera!=null){
+        Carrera carrera = dao.findById(id).orElseThrow(()->new ResourceNotFound("El id de la carrera: "+id+" no fue encontrada"));
             return Mapper.toDTO(carrera);
-        }
-        return null;
     }
 
     @Override
     public CarreraDTO findByName(String name) {
-        Carrera carrera = dao.findByName(name).orElse(null);
-        if(carrera!=null){
+        Carrera carrera = dao.findByName(name).orElseThrow(()->new ResourceNotFound("El nombre de la carrera: "+name+" no fue encontrada"));
             return Mapper.toDTO(carrera);
-        }
-        return null;
     }
 
     @Override
     public List<CarreraDTO> findByLevel(String level) {
-        List<Carrera> carrera = dao.findByLevel(level).orElse(null);
-        if(carrera!=null){
+        List<Carrera> carrera = dao.findByLevel(level).orElseThrow(()->new ResourceNotFound("El nivel : "+level+" de las carreras no fue encontrado"));
             return carrera.stream().map(Mapper::toDTO).toList();
-        }
-        return List.of();
     }
 
     @Override
     public List<CarreraDTO> findByDuration(Float duration) {
-        List<Carrera> carrera = dao.findByDuration(duration).orElse(null);
-        if(carrera!=null){
+        List<Carrera> carrera = dao.findByDuration(duration).orElseThrow(()->new ResourceNotFound("La duracion: "+duration+" de las carreras no fue encontrado"));
             return carrera.stream().map(Mapper::toDTO).toList();
-        }
-        return List.of();
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.codefs.SistemaEscolar.service;
 import com.codefs.SistemaEscolar.dao.CalificacionDAO;
 import com.codefs.SistemaEscolar.dao.InscripcionDAO;
 import com.codefs.SistemaEscolar.dto.CalificacionDTO;
+import com.codefs.SistemaEscolar.exception.ResourceNotFound;
 import com.codefs.SistemaEscolar.mapper.Mapper;
 import com.codefs.SistemaEscolar.model.Calificacion;
 import com.codefs.SistemaEscolar.model.Inscripcion;
@@ -24,55 +25,36 @@ public class CalificacionService implements ICalificacion{
 
     @Override
     public CalificacionDTO save(CalificacionDTO calificacionDTO) {
-        if(calificacionDTO!=null){
-
-            Inscripcion inscripcion = inscripcionDAO.findById(calificacionDTO.id_inscripcion()).orElse(null);
-
-            if(inscripcion!=null){
+            Inscripcion inscripcion = inscripcionDAO.findById(calificacionDTO.id_inscripcion()).orElseThrow(()->new ResourceNotFound("La ID de la inscripcion: "+calificacionDTO.id_inscripcion()+" no fue encontrada"));
                 Calificacion calificacion = Calificacion.builder()
                         .parcial(calificacionDTO.parcial())
                         .calificacionFinal(calificacionDTO.calificacionFinal())
                         .estatus(calificacionDTO.estatus())
                         .inscripcion(inscripcion)
                         .build();
-
                 return Mapper.toDTO(calificacionDAO.save(calificacion));
-            }
-
-            return null;
-        }
-        return null;
     }
 
     @Override
     public CalificacionDTO updateById(UUID id, CalificacionDTO calificacionDTO) {
-        Calificacion calificacion = calificacionDAO.findById(id).orElse(null);
-        if(calificacion!=null){
+        Calificacion calificacion = calificacionDAO.findById(id).orElseThrow(()->new ResourceNotFound("El id de la calificacion: "+id+" no fue encontrada"));
             calificacion.setParcial(calificacionDTO.parcial());
             calificacion.setCalificacionFinal(calificacion.getCalificacionFinal());
             calificacion.setEstatus(calificacionDTO.estatus());
-
-            if(calificacionDTO.id_inscripcion()!=null){
-                Inscripcion inscripcion = inscripcionDAO.findById(calificacionDTO.id_inscripcion()).orElse(null);
+                Inscripcion inscripcion = inscripcionDAO.findById(calificacionDTO.id_inscripcion()).orElseThrow(()->new ResourceNotFound("El id de la inscripcion: "+calificacionDTO.id_inscripcion()+"no fue encontrada"));
                 calificacion.setInscripcion(inscripcion);
-            }
             return Mapper.toDTO(calificacionDAO.save(calificacion));
-        }
-        return null;
     }
 
     @Override
     public void deleteById(UUID id) {
-        Calificacion calificacion = calificacionDAO.findById(id).orElse(null);
-        if(calificacion!=null){
+        Calificacion calificacion = calificacionDAO.findById(id).orElseThrow(()->new ResourceNotFound("El id de la calificacion: "+id+" no fue encontrada"));
             calificacionDAO.deleteById(id);
-        }
-        //throw new RuntimeException("");
     }
 
     @Override
     public CalificacionDTO findById(UUID id) {
-        return Mapper.toDTO(calificacionDAO.findById(id).orElseThrow(()->{throw new RuntimeException("");}));
+        return Mapper.toDTO(calificacionDAO.findById(id).orElseThrow(()->new ResourceNotFound("El id de la calificacion:"+id+" no fue encontrada")));
     }
 
     @Override
